@@ -207,7 +207,13 @@ impl ImguiRenderer {
         self.renderer.render(draw_data).unwrap();
     }
 
-    unsafe fn cleanup(&mut self) {}
+    unsafe fn cleanup(&mut self) {
+        #[cfg(any(target_arch = "aarch64", target_arch = "x86_64"))]
+        SetWindowLongPtrA(self.renderer.get_hwnd(), GWLP_WNDPROC, self.wnd_proc as usize as isize);
+
+        #[cfg(target_arch = "x86")]
+        SetWindowLongA(self.renderer.get_hwnd(), GWLP_WNDPROC, self.wnd_proc as usize as i32);
+	}
 }
 
 impl ImguiWindowsEventHandler for ImguiRenderer {
