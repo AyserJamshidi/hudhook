@@ -181,11 +181,12 @@ pub mod lifecycle {
     /// Disable hooks and eject the DLL.
     pub fn eject() {
         thread::spawn(|| unsafe {
-            crate::utils::free_console();
 
             if let Some(mut hooks) = global_state::HOOKS.take() {
                 hooks.unhook();
             }
+
+            crate::utils::free_console();
 
             if let Some(module) = global_state::MODULE.take() {
                 FreeLibraryAndExitThread(module, 0);
